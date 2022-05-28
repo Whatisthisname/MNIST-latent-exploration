@@ -242,7 +242,7 @@ if do_pca_exploration:
 
     # make a pyplot with a slider
     def update_plot(_):
-
+        global position
         decoderInput = np.array([xslider.val, yslider.val, pca.mean_[2], pca.mean_[3]]).astype(np.float64).reshape(-1, 4)
         decoderInput = pca.inverse_transform(decoderInput)
         decoderInput = torch.tensor(decoderInput).double()
@@ -254,18 +254,22 @@ if do_pca_exploration:
         genAxes.imshow(image, cmap='gray')
         genAxes.set_title("Decoded image")
         
-        mapAxes.clear()
-        mapAxes.scatter(transformed[:, 0], transformed[:, 1], c=test_dataset.targets.numpy(), cmap = "tab10", s=0.3)
-        mapAxes.scatter(xslider.val, yslider.val, c = "red", s=50, label="Your position")
-        mapAxes.set_title(f"PCA decomposition")
-        mapAxes.set_xlabel("First principal axis")
-        mapAxes.set_ylabel("Seconds principal axis")
-        mapAxes.axis("equal")
+        try:
+            position.remove()
+        except:
+            pass
+
+        position = mapAxes.scatter(xslider.val, yslider.val, c = "red", s=50, label="Your position")
         mapAxes.legend()
+        
         plt.show()
         plt.close(fig)
 
-        
+    mapAxes.scatter(transformed[:, 0], transformed[:, 1], c=test_dataset.targets.numpy(), cmap = "tab10", s=50, alpha=0.2, marker=".")
+    mapAxes.set_title(f"PCA decomposition")
+    mapAxes.set_xlabel("First principal axis")
+    mapAxes.set_ylabel("Seconds principal axis")
+    mapAxes.axis("equal")
 
     # make a slider
     xslider = Slider(slider1Axes, 'X slider', -3, 3, valinit=0)
