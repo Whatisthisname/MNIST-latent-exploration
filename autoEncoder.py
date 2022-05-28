@@ -142,8 +142,6 @@ class Autoencoder(nn.Module):
 model = Autoencoder(4).double()
 
 train = False
-
-
 if not train:
     # load model to new AutoEncoder class
     model.load_state_dict(torch.load("./ass3/autoencoder.pt"))
@@ -194,7 +192,7 @@ test_loader = DataLoader(test_dataset, batch_size=256)
 test_loader = SelfSupervisionDataLoader(test_loader, transform=addNoise)
 
 
-showcase_encoder_decoder = False
+showcase_encoder_decoder = True
 if showcase_encoder_decoder:
     # get first batch of data
     data, labels = next(iter(test_loader))
@@ -245,7 +243,7 @@ if do_pca_exploration:
     # make a pyplot with a slider
     def update_plot(_):
 
-        decoderInput = np.array([xslider.val, yslider.val, 0, 0]).astype(np.float64).reshape(-1, 4)
+        decoderInput = np.array([xslider.val, yslider.val, pca.mean_[2], pca.mean_[3]]).astype(np.float64).reshape(-1, 4)
         decoderInput = pca.inverse_transform(decoderInput)
         decoderInput = torch.tensor(decoderInput).double()
 
